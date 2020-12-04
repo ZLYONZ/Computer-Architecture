@@ -1,0 +1,149 @@
+phase_5
+   
+   0x0000555555555d45 <+0>:	    push   %rbx                                         // push %rbx
+   0x0000555555555d46 <+1>:	    mov    %rdi,%rbx                                    // %rdi'input' = %rbx
+   0x0000555555555d49 <+4>:	    callq  0x555555555fc6 <string_length>               // call string_length
+
+   0x0000555555555d4e <+9>:	    cmp    $0x6,%eax                                    // if %eax != 6
+   0x0000555555555d51 <+12>:	jne    0x555555555d84 <phase_5+63>                  // jump to explode
+
+   0x0000555555555d53 <+14>:	mov    %rbx,%rax                                    // %rax = %rbx 
+   0x0000555555555d56 <+17>:	lea    0x6(%rbx),%rdi                               // %rdi = %rbx + 6 
+   0x0000555555555d5a <+21>:	mov    $0x0,%ecx                                    // %ecx = 0
+   0x0000555555555d5f <+26>:	lea    0x163a(%rip),%rsi        # 0x5555555573a0 <array.3417>   // %rsi = %rsp + 5690
+   0x0000555555555d66 <+33>:	movzbl (%rax),%edx                                  // 入字符0拓展为32为赋值给%edx
+   0x0000555555555d69 <+36>:	and    $0xf,%edx                                    // 取%eax的后四位
+   0x0000555555555d6c <+39>:	add    (%rsi,%rdx,4),%ecx                           // %ecx = %ecx + (%rsi,%rdx,4)
+   0x0000555555555d6f <+42>:	add    $0x1,%rax                                    // %rax = %rax + 1
+
+   0x0000555555555d73 <+46>:	cmp    %rdi,%rax                                    // if %rax != rdi
+   0x0000555555555d76 <+49>:	jne    0x555555555d66 <phase_5+33>                  // jump to movzbl
+
+   0x0000555555555d78 <+51>:	cmp    $0x3e,%ecx                                   // if ecx = 62
+   0x0000555555555d7b <+54>:	je     0x555555555d82 <phase_5+61>                  // jump to d82
+   0x0000555555555d7d <+56>:	callq  0x5555555562e7 <explode_bomb>                // explode 
+   0x0000555555555d82 <+61>:	pop    %rbx                                         // pop rbx
+   0x0000555555555d83 <+62>:	retq
+   0x0000555555555d84 <+63>:	callq  0x5555555562e7 <explode_bomb>
+   0x0000555555555d89 <+68>:	jmp    0x555555555d53 <phase_5+14>
+
+(gdb)
+0x5555555573a0 <array.3417>:	2
+(gdb)
+0x5555555573a4 <array.3417+4>:	10
+(gdb)
+0x5555555573a8 <array.3417+8>:	6
+(gdb)
+0x5555555573ac <array.3417+12>:	1
+(gdb)
+0x5555555573b0 <array.3417+16>:	12
+(gdb)
+0x5555555573e0:	"So you think you can stop the bomb with ctrl-c, do you?"
+
+
+phase_4
+
+   0x0000555555555c91 <+0>:	    sub    $0x8,%rsp                    // makes stack frame
+   0x0000555555555c95 <+4>:	    mov    %edx,%eax                    // eax = 14
+   0x0000555555555c97 <+6>:	    sub    %esi,%eax                    // eax = eax - esi; eax = 14-0 --> 14
+   0x0000555555555c99 <+8>:	    mov    %eax,%ecx                    // ecx = 14
+   0x0000555555555c9b <+10>:	shr    $0x1f,%ecx                   // 0x1f = 31; ecx = 14 >>31; returns most sigfig bit --> 0
+   0x0000555555555c9e <+13>:	add    %eax,%ecx                    // ecx = ecx + eax; ecx = 0 + 14 = 14
+   0x0000555555555ca0 <+15>:	sar    %ecx                         // ecx = eax >> 1; 14 >> 1 --> same as ecx/2
+   0x0000555555555ca2 <+17>:	add    %esi,%ecx                    // ecx = ecx + esi = 7 + 0 = 7
+
+   0x0000555555555ca4 <+19>:	cmp    %edi,%ecx                    // if ecx'7' >= first input  
+   0x0000555555555ca6 <+21>:	jg     0x555555555cb6 <func4+37>    // jump to cb6
+
+   0x0000555555555ca8 <+23>:	mov    $0x0,%eax                    // if eax = 0 
+   0x0000555555555cad <+28>:	cmp    %edi,%ecx                    // if ecx'7' < first input 
+   0x0000555555555caf <+30>:	jl     0x555555555cc2 <func4+49>    // jump to cc2
+
+   0x0000555555555cb1 <+32>:	add    $0x8,%rsp                    // rsp = rsp + 8
+   0x0000555555555cb5 <+36>:	retq
+   0x0000555555555cb6 <+37>:	lea    -0x1(%rcx),%edx              // edx = rcx - 1
+   0x0000555555555cb9 <+40>:	callq  0x555555555c91 <func4>       // goes back to beginning
+   0x0000555555555cbe <+45>:	add    %eax,%eax                    // eax = eax + eax = 
+   0x0000555555555cc0 <+47>:	jmp    0x555555555cb1 <func4+32>    // jump to cb1 
+   0x0000555555555cc2 <+49>:	lea    0x1(%rcx),%esi               // //%esi = 1 + %rcx --> %esi = 1 + 7 = 8 WE ARE INCREMENTING rcx each time
+   0x0000555555555cc5 <+52>:	callq  0x555555555c91 <func4>       // goes back to beginning
+   0x0000555555555cca <+57>:	lea    0x1(%rax,%rax,1),%eax        //
+   0x0000555555555cce <+61>:	jmp    0x555555555cb1 <func4+32>    // 
+
+
+phase_6 
+
+(gdb) x/20 0x555555759220
+0x555555759220 <node1>:	60	   1	1433768496	21845
+0x555555759230 <node2>:	139	2	1433768512	21845
+0x555555759240 <node3>:	913	3	1433768528	21845
+0x555555759250 <node4>:	767	4	1433768544	21845
+0x555555759260 <node5>:	518	5	1433768208	21845
+0x555555759110 <node6>:	941	6	0	         21845
+
+
+phase_7
+
+   0x0000555555555ead <+0>:	test   %rdi,%rdi                    // if %rdi = %rdi
+   0x0000555555555eb0 <+3>:	je     0x555555555ee6 <fun7+57>     // jump to ee6
+
+   0x0000555555555eb2 <+5>:	sub    $0x8,%rsp                    // %rsp = %rsp - 8 
+   0x0000555555555eb6 <+9>:	mov    (%rdi),%edx                  // %edx = input
+   0x0000555555555eb8 <+11>:	cmp    %esi,%edx                    // if %edx > %esi 
+   0x0000555555555eba <+13>:	jg     0x555555555eca <fun7+29>     // jump to eca
+
+   0x0000555555555ebc <+15>:	mov    $0x0,%eax                    // %eax = 0
+   0x0000555555555ec1 <+20>:	cmp    %esi,%edx                    // if %dex != %input 
+   0x0000555555555ec3 <+22>:	jne    0x555555555ed7 <fun7+42>     // jump to ed7
+
+   0x0000555555555ec5 <+24>:	add    $0x8,%rsp                    // %rsp = 8
+   0x0000555555555ec9 <+28>:	retq
+   0x0000555555555eca <+29>:	mov    0x8(%rdi),%rdi               // %rdi = %rdi + 8
+   0x0000555555555ece <+33>:	callq  0x555555555ead <fun7>        // recrusive
+
+   0x0000555555555ed3 <+38>:	add    %eax,%eax                    // %eax = %eax
+   0x0000555555555ed5 <+40>:	jmp    0x555555555ec5 <fun7+24>     // jump to ec5
+
+   0x0000555555555ed7 <+42>:	mov    0x10(%rdi),%rdi              // %rdi = %rdi + 1
+   0x0000555555555edb <+46>:	callq  0x555555555ead <fun7>        // recrusive
+
+   0x0000555555555ee0 <+51>:	lea    0x1(%rax,%rax,1),%eax        // %eax = rax + 1 + rax * 1
+   0x0000555555555ee4 <+55>:	jmp    0x555555555ec5 <fun7+24>     // jump to ec5
+
+   0x0000555555555ee6 <+57>:	mov    $0xffffffff,%eax
+   0x0000555555555eeb <+62>:	retq
+
+
+
+
+Suppose you look at bomb.c and see this function declaration:
+
+void phase0(char* input);
+
+Then when you dissasemble the bomb, you get this assembly:
+
+phase0:
+    subq    $24, %rsp                                 // allocate 24 bytes for stack frame 
+    leaq    8(%rsp), %rcx                             // 加载 %rsp+8 地址到 arg2       8 8
+    leaq    12(%rsp), %rdx                            // 加载 %rsp+12 地址到 arg1      12 18
+    leaq    .LC0(%rip), %rsi  ; <--- (1)              // %d%d
+    movl    $0, %eax                                  // eax = 0 
+    call    sscanf                                    // call sscanf
+    movl    12(%rsp), %eax                            // eax = (%rsp + 12)
+    cmpl    $2, %eax                                  // if eax != 2
+    jne    .L2                                        // jump to L2
+
+    addl    8(%rsp), %eax                             // eax = eax + 8
+    cmpl    $16, %eax                                 // if eax = 16
+    je    .L1
+.L2:
+    movl    $0, %eax                                  // store 0 in eax
+    call    explode_bomb                              // explode
+.L1:
+    addq    $24, %rsp                                 // deallocate 
+    ret                                               // return 
+
+When you inspect the value in %rsi after executing the instruction at point (1) in the code, it's a pointer to the string "%d %d".
+ 
+What input would defuse this phase?
+Question Blank
